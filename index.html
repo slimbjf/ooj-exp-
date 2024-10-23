@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panier d'Achat</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Optionnel : lien vers un fichier CSS pour le style -->
+</head>
+<body>
+    <h1>Panier d'Achat</h1>
+
+    <h2>Produits disponibles</h2>
+    <div id="product-list">
+        <!-- Les produits seront ajoutés ici dynamiquement -->
+    </div>
+
+    <h2>Mon Panier</h2>
+    <div id="cart">
+        <p id="cart-message">Le panier est vide.</p>
+        <ul id="cart-items">
+            <!-- Les éléments du panier seront ajoutés ici -->
+        </ul>
+        <p id="total-items">Total des éléments : 0</p>
+        <p id="total-price">Prix total du panier : $0.00</p>
+    </div>
+
+    <script src="main.js"></script> <!-- Lien vers ton fichier JavaScript -->
+    <script>
+        // Code JavaScript pour gérer les produits et le panier
+        const productList = document.getElementById('product-list');
+        const cartItemsElement = document.getElementById('cart-items');
+        const totalItemsElement = document.getElementById('total-items');
+        const totalPriceElement = document.getElementById('total-price');
+        const cartMessage = document.getElementById('cart-message');
+
+        // Fonction pour afficher les produits disponibles
+        function displayProducts(products) {
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.innerHTML = `
+                    <h3>${product.name} - $${product.price.toFixed(2)}</h3>
+                    <button onclick="addToCart(${product.id})">Ajouter au panier</button>
+                `;
+                productList.appendChild(productDiv);
+            });
+        }
+
+        // Liste des produits
+        const products = [
+            new Product(1, "Chaussures", 49.99),
+            new Product(2, "T-shirt", 19.99),
+            new Product(3, "Pantalon", 39.99)
+        ];
+
+        // Panier d'achat
+        const cart = new ShoppingCart();
+
+        // Fonction pour ajouter un produit au panier
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            cart.addItem(product, 1); // Ajoute 1 de ce produit au panier
+            updateCartDisplay();
+        }
+
+        // Fonction pour mettre à jour l'affichage du panier
+        function updateCartDisplay() {
+            cartItemsElement.innerHTML = '';
+            if (cart.items.length === 0) {
+                cartMessage.textContent = 'Le panier est vide.';
+            } else {
+                cartMessage.textContent = '';
+                cart.items.forEach(item => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${item.product.name} (x${item.quantity}): $${item.getTotalPrice().toFixed(2)}`;
+                    cartItemsElement.appendChild(listItem);
+                });
+            }
+            totalItemsElement.textContent = `Total des éléments : ${cart.getTotalItems()}`;
+            totalPriceElement.textContent = `Prix total du panier : $${cart.getTotalPrice().toFixed(2)}`;
+        }
+
+        // Afficher les produits au chargement de la page
+        displayProducts(products);
+    </script>
+    <script src="./color.js"></script>
+</body>
+</html>
